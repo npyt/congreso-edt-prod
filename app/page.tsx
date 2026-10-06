@@ -4,12 +4,12 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 const checkoutUrl = "https://directortecnico.com/checkout?productId=congreso-edt&currency=ARS&paymentStep=2";
-const congressStart = new Date("2026-11-10T18:00:00-03:00").getTime();
+const congressStart = new Date("2026-10-16T18:30:00-03:00").getTime();
 
 const days = [
   {
     number: "01", title: "Dirección técnica y toma de decisiones", copy: "Cómo se arma un cuerpo técnico, cómo se gestiona un plantel y qué decisiones se toman bajo presión en la semana de partido.", summary: "Primera jornada centrada en cómo se arma y gestiona un cuerpo técnico integral.",
-    summaryReleaseAt: new Date("2026-11-10T22:00:00-03:00").getTime(),
+    summaryReleaseAt: new Date("2026-10-16T22:00:00-03:00").getTime(),
     highlights: [
       { title: "Diego Cagna", topic: "Armado de cuerpo técnico", copy: "Planteó qué roles son indispensables en un cuerpo técnico moderno y cómo se reparten las responsabilidades entre el DT, el ayudante de campo y el preparador físico." },
       { title: "Claudia Bravo", topic: "Gestión de plantel profesional", copy: "Compartió casos reales de manejo de grupo, comunicación con jugadores suplentes y decisiones bajo presión en semana de partido." },
@@ -17,7 +17,7 @@ const days = [
   },
   {
     number: "02", title: "Rendimiento físico y prevención", copy: "Preparación física aplicada, carga de trabajo y prevención de lesiones en el fútbol de alto rendimiento.", summary: "Claves para planificar la carga, prevenir lesiones y sostener el rendimiento.",
-    summaryReleaseAt: new Date("2026-11-11T22:00:00-03:00").getTime(),
+    summaryReleaseAt: new Date("2026-10-17T22:00:00-03:00").getTime(),
     highlights: [
       { title: "Preparación física aplicada", topic: "Carga y recuperación", copy: "Criterios para ordenar el trabajo semanal, interpretar señales de fatiga y ajustar las cargas de entrenamiento." },
       { title: "Prevención de lesiones", topic: "Decisiones interdisciplinarias", copy: "Cómo dialogan el cuerpo técnico, la preparación física y el área médica para cuidar la disponibilidad del plantel." },
@@ -25,7 +25,7 @@ const days = [
   },
   {
     number: "03", title: "Scouting, datos y gestión de clubes", copy: "Cómo se profesionaliza la búsqueda de talento y la gestión institucional con análisis de datos.", summary: "Una mirada aplicada sobre scouting, datos y gestión en el fútbol profesional.",
-    summaryReleaseAt: new Date("2026-11-12T22:00:00-03:00").getTime(),
+    summaryReleaseAt: new Date("2026-10-18T22:00:00-03:00").getTime(),
     highlights: [
       { title: "Scouting y datos", topic: "Búsqueda de talento", copy: "Qué preguntas ayudan a combinar observación, contexto y métricas al momento de evaluar futbolistas." },
       { title: "Gestión de clubes", topic: "Decisiones con información", copy: "Una síntesis de herramientas para transformar datos e informes en decisiones deportivas y de gestión." },
@@ -292,7 +292,7 @@ export default function Home() {
 
       <section className="section speakers-section" id="expositores">
         <div className="container">
-          <div className="section-head reveal"><p className="eyebrow">Expositores anunciados</p><h2>Nueve voces para bajar el fútbol profesional a la cancha.</h2><p>Dirección técnica, rendimiento, nutrición, ciencia aplicada y salud mental. Estos son los perfiles confirmados hasta hoy.</p></div>
+          <div className="section-head reveal"><p className="eyebrow">Expositores anunciados</p><h2>Nuestros expositores</h2><p>Dirección técnica, rendimiento, nutrición, ciencia aplicada y salud mental. Estos son los perfiles confirmados hasta hoy.</p></div>
           <div className="speakers-grid">
             {speakers.filter((speaker) => speaker.published).map((speaker, index) => <article className="speaker-card reveal" style={{ transitionDelay: `${(index % 3) * 85}ms` }} key={speaker.name}>
               <div className="speaker-card-visual">
@@ -310,7 +310,6 @@ export default function Home() {
 
       <section className="section program-section" id="programa">
         <div className="container">
-          <div className="section-head reveal"><p className="eyebrow">Programa</p><h2>Una experiencia hecha para mirar, conversar y aplicar.</h2><p>El acceso al Congreso reúne las tres jornadas y los contenidos que se liberan después de cada encuentro.</p></div>
           <div className="program-grid">
             {days.map((day, index) => {
               const summaryAvailable = summaryNow !== null && summaryNow >= day.summaryReleaseAt;
