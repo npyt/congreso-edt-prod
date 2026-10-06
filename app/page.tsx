@@ -33,6 +33,166 @@ const days = [
   },
 ];
 
+type SpeakerHistoryEntry = {
+  club: string;
+  role: string;
+  logo?: string;
+  period?: string;
+};
+
+type Speaker = {
+  name: string;
+  poster: string;
+  role: string;
+  topic: string;
+  copy: string;
+  context: string;
+  history: SpeakerHistoryEntry[];
+  published: boolean;
+};
+
+// Each profile is intentionally published one by one. Keep future profiles with published: false
+// until their communication piece is approved.
+const speakers: Speaker[] = [
+  {
+    name: "Darío Curti",
+    poster: "/speaker-posters/curti.jpg",
+    role: "Entrenador de fútbol · Secretario técnico · Analista de rendimiento",
+    topic: "Organización de un club semiamateur",
+    copy: "Cómo ordenar roles, construir una identidad y sostener un trabajo colectivo que haga crecer a un club.",
+    context: "También desarrolló tareas de gestión y formación en ATFA, Libro de Pases y La Pizarra del DT.",
+    history: [
+      { club: "Independiente", role: "Reserva · cuerpo técnico", logo: "/club-badges/independiente.png" },
+      { club: "Santamarina", role: "Primer equipo · cuerpo técnico", logo: "/club-badges/santamarina.png" },
+      { club: "Tigre", role: "Secretaría deportiva y coordinación de inferiores", logo: "/club-badges/tigre.png" },
+      { club: "Deportivo Maldonado", role: "Primer equipo · cuerpo técnico", logo: "/club-badges/deportivo-maldonado.png" },
+    ],
+    published: true,
+  },
+  {
+    name: "Diego Fernández",
+    poster: "/speaker-posters/fernandez.jpg",
+    role: "Director técnico de fútbol profesional",
+    topic: "La cabeza del entrenador: el arte de vivir en la cuerda floja",
+    copy: "Una mirada honesta sobre la conducción, la presión de decidir y el cuidado de la salud mental en el trabajo cotidiano del entrenador.",
+    context: "Su recorrido reúne experiencias en fútbol argentino, brasileño y colombiano.",
+    history: [
+      { club: "Corinthians", role: "Experiencia en fútbol profesional", logo: "/club-badges/corinthians.png" },
+      { club: "Patronato", role: "Experiencia en fútbol profesional", logo: "/club-badges/patronato.png" },
+      { club: "Cúcuta Deportivo", role: "Experiencia en fútbol profesional", logo: "/club-badges/cucuta-deportivo.png" },
+      { club: "Quilmes", role: "Experiencia en fútbol profesional", logo: "/club-badges/quilmes.png" },
+      { club: "Sarmiento de Junín", role: "Experiencia en fútbol profesional", logo: "/club-badges/sarmiento-junin.png" },
+      { club: "Central Córdoba", role: "Experiencia en fútbol profesional", logo: "/club-badges/central-cordoba.png" },
+      { club: "Gimnasia y Esgrima de Mendoza", role: "Experiencia en fútbol profesional", logo: "/club-badges/gimnasia-mendoza.png" },
+      { club: "Independiente Rivadavia", role: "Experiencia en fútbol profesional", logo: "/club-badges/independiente-rivadavia.png" },
+      { club: "Águilas Doradas", role: "Experiencia en fútbol profesional", logo: "/club-badges/aguilas-doradas.png" },
+    ],
+    published: true,
+  },
+  {
+    name: "Guido Thompson",
+    poster: "/speaker-posters/thompson.jpg",
+    role: "Licenciado en Educación Física · Preparador físico de fútbol",
+    topic: "Organización de la semana de entrenamiento en la altura",
+    copy: "Criterios para planificar, controlar y adaptar el trabajo semanal cuando el contexto exige respuestas específicas.",
+    context: "Más de dos décadas de experiencia en fútbol formativo, reserva y planteles profesionales. Fue gerente deportivo de Vélez Sarsfield y es director académico de Escuela EDT.",
+    history: [
+      { club: "Vélez Sarsfield", role: "Fútbol juvenil, reserva y plantel profesional", logo: "/club-badges/velez.png", period: "1998–2020" },
+    ],
+    published: true,
+  },
+  {
+    name: "Diego Herrero",
+    poster: "/speaker-posters/herrero.jpg",
+    role: "Director técnico · Gestión deportiva",
+    topic: "Creación de herramientas de trabajo aplicadas al fútbol",
+    copy: "Cómo convertir una idea de juego en herramientas claras para entrenar, comunicar y tomar mejores decisiones.",
+    context: "Además de su trabajo como entrenador, fue cofundador y coordinador general de CIFA.",
+    history: [
+      { club: "Deportivo Español", role: "Manager, coordinador general y DT principal", logo: "/club-badges/deportivo-espanol.png", period: "2017–2024" },
+      { club: "Liniers", role: "DT principal · Primera B Metropolitana", logo: "/club-badges/liniers.png", period: "2024–2025" },
+      { club: "Ituzaingó", role: "DT principal · Primera B Metropolitana", logo: "/club-badges/ituzaingo.png", period: "2026" },
+      { club: "Fénix", role: "DT principal · Primera División", logo: "/club-badges/fenix.png", period: "Actualidad" },
+    ],
+    published: true,
+  },
+  {
+    name: "Hamin Kwon",
+    poster: "/speaker-posters/kwon.jpg",
+    role: "PhD (c), CSCS, CPSS · Preparador físico y ciencia aplicada al deporte",
+    topic: "Ciencias aplicadas al fútbol",
+    copy: "Cómo traducir datos y ciencia del deporte en decisiones concretas para entrenar y preparar mejor a los jugadores.",
+    context: "También es founder y CEO de Real_AMS y trabaja en el área de Human Performance.",
+    history: [
+      { club: "Atlas FC", role: "Head de ciencias aplicadas del deporte y datos", logo: "/club-badges/atlas.png", period: "2026–actualidad" },
+      { club: "FC Dallas", role: "Preparador físico", logo: "/club-badges/fc-dallas.png", period: "2025" },
+      { club: "Indy Eleven", role: "Rendimiento y ciencias del deporte", logo: "/club-badges/indy-eleven.png", period: "2024" },
+      { club: "Nashville SC", role: "Pasantía en deporte y rendimiento", logo: "/club-badges/nashville.png", period: "2023" },
+    ],
+    published: true,
+  },
+  {
+    name: "Paola Yanque",
+    poster: "/speaker-posters/yanque.jpg",
+    role: "Nutricionista · Especialista en nutrición deportiva",
+    topic: "Nutrición estratégica en el fútbol: cómo alimentar al jugador antes, durante y después del partido",
+    copy: "Una guía aplicable para que la alimentación acompañe el rendimiento, la recuperación y la disponibilidad del jugador.",
+    context: "Licenciada en Nutrición por la Universidad Nacional de San Agustín y con formación complementaria en fútbol y suplementación deportiva.",
+    history: [
+      { club: "FBC Melgar", role: "Nutrición deportiva", logo: "/club-badges/melgar.png", period: "2024–actualidad" },
+    ],
+    published: true,
+  },
+  {
+    name: "Matías Diego Passarelli",
+    poster: "/speaker-posters/passarelli.jpg",
+    role: "Ex jugador de fútbol profesional · Técnico de fútbol",
+    topic: "Microciclo en divisiones inferiores",
+    copy: "Cómo diseñar una semana de trabajo en juveniles que conecte preparación, análisis y compromiso competitivo.",
+    context: "Actualmente trabaja en metodología de estructuras juveniles y coordinación de técnica específica en Defensa y Justicia; también es coordinador académico y docente en EDT.",
+    history: [
+      { club: "Defensa y Justicia", role: "Metodología y videoanálisis de juveniles", logo: "/club-badges/defensa-y-justicia.png", period: "2024–actualidad" },
+      { club: "Lanús", role: "Ayudante técnico · Octava División", logo: "/club-badges/lanus.png", period: "2021–2022" },
+      { club: "Comunicaciones", role: "Ayudante de campo · Primera División", logo: "/club-badges/comunicaciones.png", period: "2022–2023" },
+      { club: "El Porvenir", role: "Ayudante de campo · Primera División", logo: "/club-badges/el-porvenir.png", period: "2021–2022" },
+      { club: "Sportivo Barracas", role: "Ayudante de campo · Primera División", logo: "/club-badges/sportivo-barracas.png", period: "2021–2022" },
+      { club: "Tristán Suárez", role: "Ayudante de campo y DT de Novena", logo: "/club-badges/tristan-suarez.png", period: "2019–2021" },
+    ],
+    published: true,
+  },
+  {
+    name: "Pablo Javier Pérez Martínez",
+    poster: "/speaker-posters/perez-martinez.jpg",
+    role: "Licenciado en Psicología (UBA) · Psicoanalista",
+    topic: "El futbolista hiperconectado: gestión de redes, foco atencional y blindaje mental",
+    copy: "Una charla para entender cómo las redes, la presión y la atención inciden en el bienestar y el rendimiento del futbolista.",
+    context: "Profesor titular en psicología, salud mental, formación humana y psicología del deporte en UCU; también participa como disertante y conductor de espacios de innovación educativa.",
+    history: [
+      { club: "Universidad de Concepción del Uruguay", role: "Docencia universitaria en psicología, salud mental y deporte", period: "2009–actualidad" },
+      { club: "UNER", role: "Docente · Ciclo de Promoción de la Salud", period: "2013" },
+    ],
+    published: true,
+  },
+  {
+    name: "Leandro J. Clocchiatti",
+    poster: "/speaker-posters/clocchiatti.jpg",
+    role: "Profesor de Educación Física · Preparador físico de fútbol",
+    topic: "Trabajo de fuerza dentro del microciclo de las fuerzas básicas del Toluca",
+    copy: "Cómo integrar fuerza, planificación y análisis dentro de una semana de trabajo orientada al rendimiento.",
+    context: "Su recorrido combina fútbol formativo, profesional y coordinación de fútbol juvenil.",
+    history: [
+      { club: "Vélez Sarsfield", role: "Selectivo y reserva", logo: "/club-badges/velez.png", period: "2008–2020" },
+      { club: "FBC Melgar", role: "Fútbol infantil, juvenil y profesional", logo: "/club-badges/melgar.png", period: "2021" },
+      { club: "San Lorenzo", role: "Fútbol juvenil", logo: "/club-badges/san-lorenzo.png", period: "2022" },
+      { club: "Platense", role: "Fútbol profesional · cuerpo técnico", logo: "/club-badges/platense.png", period: "2022" },
+      { club: "Nueva Chicago", role: "Fútbol profesional", logo: "/club-badges/nueva-chicago.png", period: "2023" },
+      { club: "Flandria", role: "Fútbol profesional", logo: "/club-badges/flandria.png", period: "2023" },
+      { club: "Deportivo Toluca", role: "Coordinador de fútbol juvenil", logo: "/club-badges/toluca.png", period: "2024–actualidad" },
+    ],
+    published: true,
+  },
+];
+
 function useCountdown() {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
@@ -59,6 +219,7 @@ function RegisterButton({ className = "", label = "Inscribirme al Congreso" }: {
 export default function Home() {
   const countdown = useCountdown();
   const [selectedSummary, setSelectedSummary] = useState<(typeof days)[number] | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   const [summaryNow, setSummaryNow] = useState<number | null>(null);
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>(".reveal");
@@ -69,12 +230,12 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
   useEffect(() => {
-    if (!selectedSummary) return;
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") setSelectedSummary(null); };
+    if (!selectedSummary && !selectedSpeaker) return;
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") { setSelectedSummary(null); setSelectedSpeaker(null); } };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKeyDown); };
-  }, [selectedSummary]);
+  }, [selectedSummary, selectedSpeaker]);
   useEffect(() => {
     const updateTime = () => setSummaryNow(Date.now());
     updateTime();
@@ -129,6 +290,24 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section speakers-section" id="expositores">
+        <div className="container">
+          <div className="section-head reveal"><p className="eyebrow">Expositores anunciados</p><h2>Nueve voces para bajar el fútbol profesional a la cancha.</h2><p>Dirección técnica, rendimiento, nutrición, ciencia aplicada y salud mental. Estos son los perfiles confirmados hasta hoy.</p></div>
+          <div className="speakers-grid">
+            {speakers.filter((speaker) => speaker.published).map((speaker, index) => <article className="speaker-card reveal" style={{ transitionDelay: `${(index % 3) * 85}ms` }} key={speaker.name}>
+              <div className="speaker-card-visual">
+                <div className="speaker-portrait"><Image src={speaker.poster} alt="" fill sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 850px) calc(50vw - 33px), 350px" /></div><div className="speaker-portrait-overlay" />
+                <div className="speaker-card-head"><span>Nuestro expositor</span><b>{String(index + 1).padStart(2, "0")}</b></div>
+                <div className="speaker-card-copy"><h3>{speaker.name}</h3><p className="speaker-role">{speaker.role}</p></div>
+                <div className="speaker-topic"><span>Tema de su charla</span><strong>“{speaker.topic}”</strong></div>
+              </div>
+              {speaker.history.some((entry) => entry.logo) && <div className="speaker-club-strip" aria-label={`Clubes en la trayectoria de ${speaker.name}`}><span className="speaker-club-strip-title">Trayectoria</span><div>{speaker.history.filter((entry) => entry.logo).slice(0, 5).map((entry) => <Image key={entry.club} src={entry.logo!} alt={`Escudo de ${entry.club}`} width={34} height={34} />)}{speaker.history.filter((entry) => entry.logo).length > 5 && <span>+{speaker.history.filter((entry) => entry.logo).length - 5}</span>}</div></div>}
+              <button className="speaker-history-link" type="button" onClick={() => setSelectedSpeaker(speaker)}>Ver ficha y trayectoria <span aria-hidden="true">→</span></button>
+            </article>)}
+          </div>
+        </div>
+      </section>
+
       <section className="section program-section" id="programa">
         <div className="container">
           <div className="section-head reveal"><p className="eyebrow">Programa</p><h2>Una experiencia hecha para mirar, conversar y aplicar.</h2><p>El acceso al Congreso reúne las tres jornadas y los contenidos que se liberan después de cada encuentro.</p></div>
@@ -166,6 +345,13 @@ export default function Home() {
               <p>{highlight.copy}</p>
             </article>)}
           </div>
+        </section>
+      </div>}
+
+      {selectedSpeaker && <div className="summary-modal-backdrop" role="presentation" onMouseDown={() => setSelectedSpeaker(null)}>
+        <section className="speaker-modal" role="dialog" aria-modal="true" aria-label={`Flyer de ${selectedSpeaker.name}`} onMouseDown={(event) => event.stopPropagation()}>
+          <Image className="speaker-modal-flyer" src={selectedSpeaker.poster} alt={`Flyer de ${selectedSpeaker.name}`} width={1080} height={1350} priority />
+          <button className="speaker-flyer-close" type="button" onClick={() => setSelectedSpeaker(null)} aria-label="Cerrar flyer">×</button>
         </section>
       </div>}
 
