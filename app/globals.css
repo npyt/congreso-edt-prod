@@ -47,6 +47,9 @@ h1 em { display:block; color:#8b84f2; font-style:normal; }
 .time-unit span { display:block; margin-top:6px; color:#96a5ba; font-size:10px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
 .include-card { padding:28px; border:1px solid rgba(255,255,255,.17); border-radius:20px; background:rgba(255,255,255,.06); box-shadow:0 30px 60px -35px #000; backdrop-filter:blur(8px); }
 .card-label { margin-bottom:19px; color:#fff; font-size:16px; font-weight:800; }
+.price-tag { display:flex; align-items:end; justify-content:space-between; gap:14px; margin:0 0 20px; padding:15px 16px; border:1px solid rgba(111,228,229,.44); border-radius:14px; background:linear-gradient(105deg,rgba(19,189,206,.2),rgba(113,54,211,.24)); }
+.price-tag span { color:#cbd6e5; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+.price-tag strong { color:#fff; font-size:26px; line-height:1; letter-spacing:-.05em; }
 .include-card ul { display:grid; gap:17px; margin:0; padding:0; list-style:none; }
 .include-card li { display:grid; grid-template-columns:27px 1fr; gap:11px; align-items:start; color:#cbd6e5; font-size:14px; line-height:1.45; }
 .include-card i { display:grid; place-items:center; width:23px; height:23px; color:#6de6e2; border-radius:7px; background:rgba(35,197,202,.15); font-size:9px; font-style:normal; font-weight:800; }
@@ -54,13 +57,20 @@ h1 em { display:block; color:#8b84f2; font-style:normal; }
 .section-head { max-width:685px; margin-bottom:43px; }
 .section-head h2,.final-card h2 { margin-bottom:15px; font-size:clamp(2rem,3.65vw,3rem); font-weight:900; line-height:1.06; letter-spacing:-.052em; }
 .section-head > p:last-child { margin-bottom:0; color:var(--muted); font-size:16px; line-height:1.65; }
-.pitch-photo { position:relative; height:340px; margin-bottom:22px; overflow:hidden; border-radius:22px; background:#d8e1e9; box-shadow:0 25px 46px -29px rgba(16,28,49,.55); }
-.pitch-photo img { object-fit:cover; }
-.axes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-.axis-card { min-height:230px; padding:25px; border:1px solid var(--line); border-radius:17px; background:#fff; }
-.axis-card > span { display:block; margin-bottom:31px; color:#6048c9; font-size:13px; font-weight:900; letter-spacing:.1em; }
-.axis-card h3 { margin-bottom:10px; font-size:18px; font-weight:800; line-height:1.25; letter-spacing:-.025em; }
-.axis-card p { margin:0; color:var(--muted); font-size:14px; line-height:1.55; }
+.schedule-meta { display:flex; flex-wrap:wrap; align-items:center; gap:11px; margin:-17px 0 24px; color:#445b7a; font-size:13px; font-weight:900; letter-spacing:.04em; text-transform:uppercase; }
+.schedule-meta i { width:5px; height:5px; border-radius:50%; background:#20c7cf; }
+.schedule-grid { display:grid; gap:14px; }
+.schedule-card { display:grid; grid-template-columns:150px minmax(240px,1fr) minmax(230px,.9fr); align-items:center; overflow:hidden; border:1px solid #cfd9e6; border-radius:18px; background:#071423; box-shadow:0 22px 42px -34px rgba(9,25,48,.8); }
+.schedule-card-day { align-self:stretch; display:flex; align-items:center; justify-content:center; min-height:132px; padding:20px 25px; color:#fff; background:linear-gradient(145deg,#096ce6,#142eb8); }
+.schedule-card.cyan .schedule-card-day { background:linear-gradient(145deg,#16cbd1,#147ec4); }
+.schedule-card.violet .schedule-card-day { background:linear-gradient(145deg,#913cef,#5020bc); }
+.schedule-card-day span { font-size:20px; font-weight:900; letter-spacing:.04em; text-transform:uppercase; }
+.schedule-card-main { padding:23px 30px; }
+.schedule-card-main p { margin:0 0 8px; color:#4de4e1; font-size:15px; font-weight:900; letter-spacing:.02em; text-transform:uppercase; }
+.schedule-card-main strong { color:#fff; font-size:24px; letter-spacing:-.035em; }
+.schedule-card ul { display:grid; gap:9px; margin:0; padding:19px 28px; color:#e2e9f2; border-left:1px solid rgba(95,230,227,.38); list-style:none; font-size:13px; font-weight:800; text-transform:uppercase; }
+.schedule-card li { display:flex; align-items:center; gap:9px; }
+.schedule-card li::before { width:7px; height:7px; border-radius:50%; background:#32e1de; content:""; }
 .speakers-section { position:relative; padding-bottom:82px; overflow:hidden; color:#fff; background:radial-gradient(790px 470px at 104% 0,rgba(13,77,161,.56),transparent 66%),radial-gradient(620px 390px at -12% 45%,rgba(83,23,190,.34),transparent 72%),#020b18; }
 .speakers-section::before { content:""; position:absolute; inset:0; opacity:.26; background-image:linear-gradient(120deg,transparent 48%,rgba(76,223,231,.24) 48.15%,transparent 48.45%),linear-gradient(30deg,transparent 67%,rgba(119,65,230,.22) 67.15%,transparent 67.5%); background-size:260px 220px; pointer-events:none; }
 .speakers-section .container { position:relative; z-index:1; }
@@ -99,7 +109,7 @@ h1 em { display:block; color:#8b84f2; font-style:normal; }
 .speaker-modal-flyer { display:block; width:auto; max-width:min(100%,580px); height:auto; max-height:calc(100vh - 40px); margin:0 auto; border:1px solid rgba(91,228,229,.62); box-shadow:0 28px 80px rgba(0,0,0,.58); object-fit:contain; }
 .speaker-flyer-close { position:absolute; z-index:2; top:12px; right:calc(50% - min(50%,290px) + 12px); display:grid; place-items:center; width:38px; height:38px; padding:0; color:#fff; border:1px solid rgba(255,255,255,.66); border-radius:50%; background:rgba(2,10,24,.72); box-shadow:0 3px 12px rgba(0,0,0,.32); cursor:pointer; font:inherit; font-size:27px; line-height:1; }
 .speaker-flyer-close:focus-visible { outline:3px solid #23c5ca; outline-offset:3px; }
-.final-section { padding-top:0; }
+.final-section { padding-top:58px; }
 .final-card { position:relative; display:flex; align-items:center; justify-content:space-between; gap:36px; overflow:hidden; padding:57px 52px; color:#fff; border-radius:28px; background:radial-gradient(390px 300px at 96% 15%,rgba(142,83,224,.42),transparent 72%),var(--navy); }
 .final-card::after { content:""; position:absolute; inset:0; opacity:.32; background-image:linear-gradient(110deg,transparent 48%,rgba(255,255,255,.1) 48.2%,transparent 48.7%); pointer-events:none; }
 .final-card > * { position:relative; z-index:1; }
@@ -124,5 +134,5 @@ h1 em { display:block; color:#8b84f2; font-style:normal; }
 @keyframes reveal { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
 @keyframes pulse { 50% { opacity:.22; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } .reveal { opacity:1; transform:none; } }
-@media (max-width:850px) { .hero-grid { grid-template-columns:1fr; gap:40px; } .include-card { max-width:620px; } .axes-grid { grid-template-columns:1fr; } .speakers-grid { grid-template-columns:repeat(2,1fr); } .axis-card { min-height:0; } .final-card { align-items:flex-start; flex-direction:column; } }
-@media (max-width:560px) { .container { width:min(100% - 32px,1120px); } .promo-bar { min-height:38px; justify-content:space-between; gap:8px; padding:7px 16px; font-size:10px; } .promo-action { font-size:10px; } .header { top:38px; min-height:69px; padding:12px 16px; gap:10px; } .header-actions { gap:7px; } .brand > img:first-child { width:28px; height:28px; } .brand-rule { height:24px; } .brand .congreso-mark { width:24px; height:24px; } .school-link,.header-register { padding:8px 10px; font-size:12px; } .floating-register { right:16px; bottom:16px; width:auto; min-height:49px; padding:12px 17px; } .hero { padding:68px 0 70px; } .lead { font-size:16px; } .button { width:100%; } .header-register,.floating-register { width:auto; } .hero-actions { flex-direction:column; } .time-unit { min-width:calc(50% - 5px); } .section { padding:70px 0; } .pitch-photo { height:240px; } .speakers-section { padding-bottom:54px; } .speakers-grid { grid-template-columns:1fr; } .speaker-card { min-height:0; } .speaker-history-row { grid-template-columns:46px 1fr; gap:12px; } .speaker-history-row time { grid-column:2; margin-top:-9px; } .final-card { padding:38px 25px; border-radius:22px; } .footer { padding:37px 0; } .summary-modal-backdrop { padding:16px; } }
+@media (max-width:850px) { .hero-grid { grid-template-columns:1fr; gap:40px; } .include-card { max-width:620px; } .schedule-card { grid-template-columns:130px 1fr; } .schedule-card ul { grid-column:2; padding-top:0; border-left:0; } .speakers-grid { grid-template-columns:repeat(2,1fr); } .final-card { align-items:flex-start; flex-direction:column; } }
+@media (max-width:560px) { .container { width:min(100% - 32px,1120px); } .promo-bar { min-height:38px; justify-content:space-between; gap:8px; padding:7px 16px; font-size:10px; } .promo-action { font-size:10px; } .header { top:38px; min-height:69px; padding:12px 16px; gap:10px; } .header-actions { gap:7px; } .brand > img:first-child { width:28px; height:28px; } .brand-rule { height:24px; } .brand .congreso-mark { width:24px; height:24px; } .school-link,.header-register { padding:8px 10px; font-size:12px; } .floating-register { right:16px; bottom:16px; width:auto; min-height:49px; padding:12px 17px; } .hero { padding:68px 0 70px; } .lead { font-size:16px; } .button { width:100%; } .header-register,.floating-register { width:auto; } .hero-actions { flex-direction:column; } .time-unit { min-width:calc(50% - 5px); } .section { padding:70px 0; } .schedule-meta { gap:8px; margin-top:-22px; font-size:11px; } .schedule-card { grid-template-columns:1fr; } .schedule-card-day { min-height:0; padding:18px 20px; } .schedule-card-day span { font-size:18px; } .schedule-card-main { padding:22px 20px 13px; } .schedule-card-main p { font-size:13px; } .schedule-card-main strong { font-size:22px; } .schedule-card ul { grid-column:auto; gap:8px; padding:7px 20px 21px; font-size:12px; } .speakers-section { padding-bottom:54px; } .speakers-grid { grid-template-columns:1fr; } .speaker-card { min-height:0; } .speaker-history-row { grid-template-columns:46px 1fr; gap:12px; } .speaker-history-row time { grid-column:2; margin-top:-9px; } .final-section { padding-top:38px; } .final-card { padding:38px 25px; border-radius:22px; } .footer { padding:37px 0; } .summary-modal-backdrop { padding:16px; } }

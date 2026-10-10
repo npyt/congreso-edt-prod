@@ -6,16 +6,10 @@ import { useEffect, useMemo, useState } from "react";
 const checkoutUrl = "https://directortecnico.com/checkout?productId=congreso-edt&currency=ARS&paymentStep=2";
 const congressStart = new Date("2026-10-16T18:30:00-03:00").getTime();
 
-const days = [
-  {
-    number: "01", title: "Dirección técnica y toma de decisiones", copy: "Cómo se arma un cuerpo técnico, cómo se gestiona un plantel y qué decisiones se toman bajo presión en la semana de partido.",
-  },
-  {
-    number: "02", title: "Rendimiento físico y prevención", copy: "Preparación física aplicada, carga de trabajo y prevención de lesiones en el fútbol de alto rendimiento.",
-  },
-  {
-    number: "03", title: "Scouting, datos y gestión de clubes", copy: "Cómo se profesionaliza la búsqueda de talento y la gestión institucional con análisis de datos.",
-  },
+const schedule = [
+  { day: "Día 1", date: "Viernes 16 de octubre", time: "18:30 a 22:00 hs", accent: "blue" },
+  { day: "Día 2", date: "Sábado 17 de octubre", time: "9:00 a 12:30 hs", accent: "cyan" },
+  { day: "Día 3", date: "Domingo 18 de octubre", time: "9:00 a 12:30 hs", accent: "violet" },
 ];
 
 type SpeakerHistoryEntry = {
@@ -249,6 +243,7 @@ export default function Home() {
           </div>
           <aside className="include-card enter delay-1">
             <p className="card-label">Tu inscripción incluye</p>
+            <p className="price-tag"><span>Valor de inscripción</span><strong>$50.000</strong></p>
             <ul>
               <li><i>01</i><span>Acceso en vivo a las tres jornadas, vía streaming.</span></li>
               <li><i>02</i><span>Resúmenes y contenidos destacados al finalizar cada día.</span></li>
@@ -261,9 +256,13 @@ export default function Home() {
 
       <section className="section" id="congreso">
         <div className="container">
-          <div className="section-head reveal"><p className="eyebrow">Sobre el Congreso</p><h2>Tres jornadas, tres miradas del fútbol profesional.</h2><p>Cada día reúne a especialistas que trabajan hoy en clubes profesionales de la región.</p></div>
-          <div className="pitch-photo reveal"><Image src="https://images.unsplash.com/photo-1729843352938-0e10fbf96585?auto=format&fit=crop&w=1600&q=82" alt="Vista aérea de una cancha de fútbol" fill sizes="(max-width: 900px) 100vw, 1040px" /></div>
-          <div className="axes-grid">{days.map((day, index) => <article className="axis-card reveal" style={{ transitionDelay: `${index * 90}ms` }} key={day.number}><span>{day.number}</span><h3>{day.title}</h3><p>{day.copy}</p></article>)}</div>
+          <div className="section-head reveal"><p className="eyebrow">Cronograma del Congreso</p><h2>12 expositores en tres días de fútbol real.</h2><p>Un encuentro virtual con charlas aplicadas, breaks y una mesa redonda final en cada jornada.</p></div>
+          <div className="schedule-meta reveal"><span>Modalidad virtual</span><i aria-hidden="true" /> <span>12 expositores</span><i aria-hidden="true" /> <span>3 días</span></div>
+          <div className="schedule-grid">{schedule.map((item, index) => <article className={`schedule-card ${item.accent} reveal`} style={{ transitionDelay: `${index * 90}ms` }} key={item.day}>
+            <div className="schedule-card-day"><span>{item.day}</span></div>
+            <div className="schedule-card-main"><p>{item.date}</p><strong>{item.time}</strong></div>
+            <ul><li>4 expositores</li><li>Breaks</li><li>Mesa redonda final</li></ul>
+          </article>)}</div>
         </div>
       </section>
 
@@ -286,7 +285,7 @@ export default function Home() {
       </section>
 
       <section className="section final-section">
-        <div className="container"><div className="final-card reveal"><div><p className="eyebrow">Cupos limitados</p><h2>Reservá tu lugar en el Congreso EDT.</h2><p>Todo el contenido, una sola inscripción y una experiencia pensada para quienes quieren trabajar mejor en fútbol.</p></div><RegisterButton /></div></div>
+        <div className="container"><div className="final-card reveal"><div><p className="eyebrow">Cupos limitados · Inscripción $50.000</p><h2>Reservá tu lugar en el Congreso EDT.</h2><p>Todo el contenido, una sola inscripción y una experiencia pensada para quienes quieren trabajar mejor en fútbol.</p></div><RegisterButton /></div></div>
       </section>
 
       {selectedSpeaker && <div className="summary-modal-backdrop" role="presentation" onMouseDown={() => setSelectedSpeaker(null)}>
