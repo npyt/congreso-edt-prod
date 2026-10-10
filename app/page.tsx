@@ -249,6 +249,8 @@ export default function Home() {
               <li><i>02</i><span>Resúmenes y contenidos destacados al finalizar cada día.</span></li>
               <li><i>03</i><span>Certificado de participación de Escuela EDT.</span></li>
               <li><i>04</i><span>Un espacio para llevar ideas directamente a tu trabajo.</span></li>
+              <li><i>05</i><span>Grabación completa para volver a ver el Congreso.</span></li>
+              <li><i>06</i><span>Participación en el sorteo por una beca para un curso de EDT.</span></li>
             </ul>
           </aside>
         </div>
