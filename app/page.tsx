@@ -259,7 +259,7 @@ export default function Home() {
           <div className="section-head reveal"><p className="eyebrow">Cronograma del Congreso</p><h2>12 expositores en tres días de fútbol real.</h2><p>Un encuentro virtual con charlas aplicadas, breaks y una mesa redonda final en cada jornada.</p></div>
           <div className="schedule-meta reveal"><span>Modalidad virtual</span><i aria-hidden="true" /> <span>12 expositores</span><i aria-hidden="true" /> <span>3 días</span></div>
           <div className="schedule-grid">{schedule.map((item, index) => <article className={`schedule-card ${item.accent} reveal`} style={{ transitionDelay: `${index * 90}ms` }} key={item.day}>
-            <div className="schedule-card-day"><span>{item.day}</span><b>{String(index + 1).padStart(2, "0")}</b></div>
+            <div className="schedule-card-day"><span>{item.day}</span></div>
             <div className="schedule-card-main"><p>{item.date}</p><strong>{item.time}</strong></div>
             <ul><li>4 expositores</li><li>Breaks</li><li>Mesa redonda final</li></ul>
           </article>)}</div>
