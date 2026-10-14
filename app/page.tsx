@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-const checkoutUrl = "https://directortecnico.com/checkout?productId=congreso-edt&currency=ARS&paymentStep=2";
+const baseCheckoutUrl = "https://directortecnico.com/checkout?productId=congreso-edt&currency=ARS&paymentStep=2";
 const congressStart = new Date("2026-10-16T18:30:00-03:00").getTime();
 
 const schedule = [
@@ -283,11 +283,27 @@ function useCountdown() {
   }, [now]);
 }
 
-function RegisterButton({ className = "", label = "Inscribirme al Congreso" }: { className?: string; label?: string }) {
-  return <a className={`button button-primary ${className}`} href={checkoutUrl}>{label} <span aria-hidden="true">↗</span></a>;
+function RegisterButton({ href, className = "", label = "Inscribirme al Congreso" }: { href: string; className?: string; label?: string }) {
+  return <a className={`button button-primary ${className}`} href={href}>{label} <span aria-hidden="true">↗</span></a>;
+}
+
+function useCheckoutUrl() {
+  const [checkoutUrl, setCheckoutUrl] = useState(baseCheckoutUrl);
+
+  useEffect(() => {
+    const campaign = new URLSearchParams(window.location.search).get("utm_campaign")?.trim();
+    if (!campaign) return;
+
+    const checkout = new URL(baseCheckoutUrl);
+    checkout.searchParams.set("utm_campaign", campaign);
+    setCheckoutUrl(checkout.toString());
+  }, []);
+
+  return checkoutUrl;
 }
 
 export default function Home() {
+  const checkoutUrl = useCheckoutUrl();
   const countdown = useCountdown();
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   useEffect(() => {
@@ -318,9 +334,9 @@ export default function Home() {
           <Image className="congreso-mark" src="/congreso-icon.png" alt="" width={36} height={36} />
           <span><strong>Congreso</strong><small>por EDT</small></span>
         </a>
-        <div className="header-actions"><RegisterButton className="header-register" label="Inscribirme" /><a className="school-link" href="https://directortecnico.com">Escuela EDT <span aria-hidden="true">↗</span></a></div>
+        <div className="header-actions"><RegisterButton href={checkoutUrl} className="header-register" label="Inscribirme" /><a className="school-link" href="https://directortecnico.com">Escuela EDT <span aria-hidden="true">↗</span></a></div>
       </header>
-      <RegisterButton className="floating-register" label="Inscribirme" />
+      <RegisterButton href={checkoutUrl} className="floating-register" label="Inscribirme" />
 
       <section className="hero" id="inicio">
         <div className="container hero-grid">
@@ -328,7 +344,7 @@ export default function Home() {
             <p className="eyebrow">Escuela EDT · Tres jornadas online</p>
             <h1>Congreso Virtual EDT 2026 <em>Tres días para pensar el fútbol profesional.</em></h1>
             <p className="lead">Charlas en vivo con referentes de la dirección técnica, la preparación física, el scouting y la gestión de clubes. Un espacio online, intensivo y aplicable.</p>
-            <div className="hero-actions"><RegisterButton /><a className="button button-secondary" href="#expositores">Ver expositores <span aria-hidden="true">↓</span></a></div>
+            <div className="hero-actions"><RegisterButton href={checkoutUrl} /><a className="button button-secondary" href="#expositores">Ver expositores <span aria-hidden="true">↓</span></a></div>
             <div className="countdown" aria-label="Cuenta regresiva al Congreso">
               {countdown.map(([value, label]) => <div className="time-unit" key={label}><strong>{String(value).padStart(2, "0")}</strong><span>{label}</span></div>)}
             </div>
@@ -394,7 +410,7 @@ export default function Home() {
       </section>
 
       <section className="section final-section">
-        <div className="container"><div className="final-card reveal"><div><p className="eyebrow">Cupos limitados · Inscripción $50.000</p><h2>Reservá tu lugar en el Congreso EDT.</h2><p>Todo el contenido, una sola inscripción y una experiencia pensada para quienes quieren trabajar mejor en fútbol.</p></div><RegisterButton /></div></div>
+        <div className="container"><div className="final-card reveal"><div><p className="eyebrow">Cupos limitados · Inscripción $50.000</p><h2>Reservá tu lugar en el Congreso EDT.</h2><p>Todo el contenido, una sola inscripción y una experiencia pensada para quienes quieren trabajar mejor en fútbol.</p></div><RegisterButton href={checkoutUrl} /></div></div>
       </section>
 
       {selectedSpeaker && <div className="summary-modal-backdrop" role="presentation" onMouseDown={() => setSelectedSpeaker(null)}>
