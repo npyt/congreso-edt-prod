@@ -1,13 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type FormEvent, useEffect, useState } from "react";
-
-const baseCheckoutUrl = "https://directortecnico.com/checkout?productId=congreso-edt&currency=ARS&paymentStep=2";
-// Enable the live experience before the first session so attendees can sign in early.
-const liveAccessEnabled = true;
-const congressProductSlug = "congreso-edt";
-const apiRoot = "https://api.directortecnico.com";
+import { useEffect, useState } from "react";
 
 const schedule = [
   { day: "Día 1", date: "Viernes 16 de octubre", time: "18:30 a 22:00 hs", accent: "blue" },
@@ -267,205 +261,7 @@ const speakers: Speaker[] = [
   },
 ];
 
-function RegisterButton({ href, className = "", label = "Inscribirme al Congreso" }: { href: string; className?: string; label?: string }) {
-  return <a className={`button button-primary ${className}`} href={href}>{label} <span aria-hidden="true">↗</span></a>;
-}
-
-function useCheckoutUrl() {
-  const [checkoutUrl, setCheckoutUrl] = useState(baseCheckoutUrl);
-
-  useEffect(() => {
-    const campaign = new URLSearchParams(window.location.search).get("utm_campaign")?.trim();
-    if (!campaign) return;
-
-    const checkout = new URL(baseCheckoutUrl);
-    checkout.searchParams.set("utm_campaign", campaign);
-    setCheckoutUrl(checkout.toString());
-  }, []);
-
-  return checkoutUrl;
-}
-
-
-type ProductContent = { type?: string; url?: string; title?: string; order?: number };
-type SignedInUser = { firstName?: string | null; lastName?: string | null };
-type AccessStep = "choice" | "email" | "requesting-code" | "code" | "verifying-code" | "ready" | "unregistered" | "missing-link" | "account-not-found";
-
-function LiveAccess({ checkoutUrl }: { checkoutUrl: string }) {
-  const [step, setStep] = useState<AccessStep>("choice");
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [user, setUser] = useState<SignedInUser | null>(null);
-  const [zoomUrl, setZoomUrl] = useState("");
-  const [error, setError] = useState("");
-
-  const goToEmail = () => { setError(""); setCode(""); setStep("email"); };
-
-  const requestCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
-    setStep("requesting-code");
-
-    try {
-      const codeResponse = await fetch(`${apiRoot}/users/one-time-login-codes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
-      });
-
-      if (!codeResponse.ok) {
-        if (codeResponse.status === 404) {
-          setStep("account-not-found");
-          return;
-        }
-        setStep("email");
-        setError(codeResponse.status === 429
-          ? "Esperá un minuto antes de pedir otro código."
-          : "No pudimos enviar el código. Intentá nuevamente en unos minutos.");
-        return;
-      }
-
-      setStep("code");
-    } catch {
-      setStep("email");
-      setError("No pudimos conectar con EDT. Revisá tu conexión e intentá de nuevo.");
-    }
-  };
-
-  const verifyCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
-    setStep("verifying-code");
-
-    try {
-      const signInResponse = await fetch(`${apiRoot}/users/one-time-login-codes/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), code: code.trim().toUpperCase() }),
-      });
-      const token = signInResponse.headers.get("Authorization");
-
-      if (!signInResponse.ok || !token) {
-        setStep("code");
-        setError("El código no es válido o venció. Revisalo o pedí uno nuevo.");
-        return;
-      }
-
-      const signedInUser = await signInResponse.json() as SignedInUser;
-      setUser(signedInUser);
-
-      const contentResponse = await fetch(`${apiRoot}/products/${congressProductSlug}/content`, {
-        headers: { Authorization: token },
-      });
-
-      if (!contentResponse.ok) {
-        setStep("unregistered");
-        return;
-      }
-
-      const contents = await contentResponse.json() as ProductContent[];
-      const meeting = contents
-        .filter((content) => content.type === "LINK" && content.url)
-        .sort((first, second) => (first.order ?? 0) - (second.order ?? 0))[0];
-      const configuredZoomUrl = process.env.NEXT_PUBLIC_CONGRESS_ZOOM_URL;
-      const link = meeting?.url || configuredZoomUrl;
-
-      if (!link) {
-        setStep("missing-link");
-        return;
-      }
-
-      setZoomUrl(link);
-      setStep("ready");
-    } catch {
-      setStep("code");
-      setError("No pudimos conectar con EDT. Revisá tu conexión e intentá de nuevo.");
-    }
-  };
-
-  if (step === "ready") {
-    const name = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
-    return <aside className="live-access-card live-access-ready" aria-live="polite">
-      <span className="live-card-kicker"><i aria-hidden="true" />Acceso confirmado</span>
-      <h2>{name ? `Bienvenido, ${name.split(" ")[0]}.` : "Tu lugar está listo."}</h2>
-      <p>La sala de Zoom está abierta. Entrá cuando quieras y disfrutá de la jornada en vivo.</p>
-      <a className="live-zoom-button" href={zoomUrl} target="_blank" rel="noreferrer">Ingresar a Zoom <span aria-hidden="true">↗</span></a>
-      <button className="live-back-link" type="button" onClick={() => setStep("choice")}>Usar otra cuenta</button>
-    </aside>;
-  }
-
-  if (step === "unregistered") {
-    return <aside className="live-access-card" aria-live="polite">
-      <span className="live-card-kicker"><i aria-hidden="true" />Cuenta encontrada</span>
-      <h2>Esta cuenta todavía no tiene acceso.</h2>
-      <p>Si ya te inscribiste, revisá que hayas ingresado con el mismo correo. Si aún no participás, podés reservar tu lugar ahora.</p>
-      <RegisterButton href={checkoutUrl} className="live-register-button" label="Quiero participar del Congreso" />
-      <button className="live-back-link" type="button" onClick={goToEmail}>Probar con otro correo</button>
-    </aside>;
-  }
-
-  if (step === "account-not-found") {
-    return <aside className="live-access-card" aria-live="polite">
-      <span className="live-card-kicker"><i aria-hidden="true" />Cuenta no encontrada</span>
-      <h2>No encontramos una cuenta con ese correo.</h2>
-      <p>Probá con el correo que usaste al inscribirte. Si todavía no tenés tu lugar, podés reservarlo ahora.</p>
-      <RegisterButton href={checkoutUrl} className="live-register-button" label="Quiero participar del Congreso" />
-      <button className="live-back-link" type="button" onClick={goToEmail}>Usar otro correo</button>
-    </aside>;
-  }
-
-  if (step === "missing-link") {
-    return <aside className="live-access-card" aria-live="polite">
-      <span className="live-card-kicker"><i aria-hidden="true" />Acceso confirmado</span>
-      <h2>Estamos preparando la sala.</h2>
-      <p>Tu inscripción está confirmada. El botón de ingreso se habilitará apenas la sala de Zoom esté disponible.</p>
-      <button className="live-back-link" type="button" onClick={() => setStep("choice")}>Volver</button>
-    </aside>;
-  }
-
-  if (step === "email" || step === "requesting-code") {
-    return <aside className="live-access-card live-code-card">
-      <button className="live-close" type="button" onClick={() => setStep("choice")} aria-label="Volver a las opciones de acceso">×</button>
-      <span className="live-card-kicker"><i aria-hidden="true" />Ya estoy registrado</span>
-      <h2>Ingresá con tu correo.</h2>
-      <p>Te vamos a enviar un código único de seis caracteres para confirmar tu acceso. No necesitás recordar tu contraseña.</p>
-      <form className="live-code-form" onSubmit={requestCode}>
-        <label>Correo electrónico<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" placeholder="nombre@correo.com" required /></label>
-        {error && <p className="live-form-error" role="alert">{error}</p>}
-        <button className="live-zoom-button" type="submit" disabled={step === "requesting-code"}>{step === "requesting-code" ? "Enviando código…" : "Continuar"}<span aria-hidden="true">→</span></button>
-      </form>
-    </aside>;
-  }
-
-  if (step === "code" || step === "verifying-code") {
-    return <aside className="live-access-card live-code-card">
-      <button className="live-close" type="button" onClick={goToEmail} aria-label="Cambiar correo">×</button>
-      <span className="live-card-kicker"><i aria-hidden="true" />Revisá tu correo</span>
-      <h2>Ingresá tu código.</h2>
-      <p>Enviamos un código de seis caracteres a <strong className="live-email-hint">{email.trim().toLowerCase()}</strong>. Vence en 10 minutos.</p>
-      <form className="live-code-form" onSubmit={verifyCode}>
-        <label>Código de acceso<input className="live-code-input" type="text" value={code} onChange={(event) => setCode(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))} autoComplete="one-time-code" inputMode="text" placeholder="ABC123" maxLength={6} required /></label>
-        {error && <p className="live-form-error" role="alert">{error}</p>}
-        <button className="live-zoom-button" type="submit" disabled={step === "verifying-code"}>{step === "verifying-code" ? "Verificando acceso…" : "Ingresar al Congreso"}<span aria-hidden="true">→</span></button>
-      </form>
-      <button className="live-back-link" type="button" onClick={() => { setError(""); setStep("email"); }}>Cambiar correo o pedir otro código</button>
-    </aside>;
-  }
-
-  return <aside className="live-access-card">
-    <span className="live-card-kicker"><i aria-hidden="true" />Elegí cómo ingresar</span>
-    <h2>Tu acceso al Congreso.</h2>
-    <p>Si ya tenés tu lugar, entrá con tu cuenta de EDT. Todavía estás a tiempo de sumarte a la experiencia.</p>
-    <div className="live-options">
-      <button className="live-option live-option-primary" type="button" onClick={goToEmail}><span className="live-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M14 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span><span><b>Ya estoy registrado</b><small>Recibir código de acceso</small></span></button>
-      <RegisterButton href={checkoutUrl} className="live-option live-option-secondary" label="Quiero participar" />
-    </div>
-  </aside>;
-}
-
 export default function Home() {
-  const checkoutUrl = useCheckoutUrl();
-  const isLive = liveAccessEnabled;
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>(".reveal");
@@ -484,10 +280,9 @@ export default function Home() {
   }, [selectedSpeaker]);
   return (
     <main>
-      <a className={`promo-bar${isLive ? " promo-bar-live" : ""}`} href={isLive ? "#en-vivo" : checkoutUrl}>
-        <span><b>Congreso Virtual EDT 2026</b> · {isLive ? "Ya estamos en vivo" : "Inscripciones abiertas"}</span>
-        <span className="promo-action">{isLive ? "Ingresar al Congreso" : "Reservá tu lugar"} <i aria-hidden="true">→</i></span>
-      </a>
+      <div className="promo-bar promo-bar-live">
+        <span><b>Congreso Virtual EDT 2026</b> · Edición finalizada</span>
+      </div>
       <header className="header">
         <a className="brand" href="#inicio" aria-label="Congreso Virtual EDT 2026, ir al inicio">
           <Image src="/edt-logo.png" alt="Escuela EDT" width={48} height={48} priority />
@@ -495,46 +290,28 @@ export default function Home() {
           <Image className="congreso-mark" src="/congreso-icon.png" alt="" width={36} height={36} />
           <span><strong>Congreso</strong><small>por EDT</small></span>
         </a>
-        <div className="header-actions">{isLive ? <a className="header-live-link" href="#en-vivo"><i aria-hidden="true" />En vivo</a> : <RegisterButton href={checkoutUrl} className="header-register" label="Inscribirme" />}<a className="school-link" href="https://directortecnico.com">Escuela EDT <span aria-hidden="true">↗</span></a></div>
+        <div className="header-actions"><a className="school-link" href="https://directortecnico.com">Escuela EDT <span aria-hidden="true">↗</span></a></div>
       </header>
-      {isLive ? <a className="floating-register floating-live" href="#en-vivo"><i aria-hidden="true" />Ingresar en vivo</a> : <RegisterButton href={checkoutUrl} className="floating-register" label="Inscribirme" />}
 
-      <section className={`hero${isLive ? " hero-live" : ""}`} id="inicio">
+      <section className="hero hero-live" id="inicio">
         <div className="container hero-grid">
-          {isLive ? <>
-            <div className="hero-copy enter">
-              <p className="eyebrow live-eyebrow"><i aria-hidden="true" />Transmisión en vivo · Congreso EDT 2026</p>
-              <h1>Ya estamos <em>en vivo.</em></h1>
-              <p className="lead">Las ideas, experiencias y herramientas del fútbol profesional ya están en juego. Ingresá con tu cuenta EDT y sumate a la jornada desde donde estés.</p>
-              <div className="live-signal-row"><span className="live-pulse" aria-hidden="true" /><span>Señal en directo</span><b>Zoom · acceso para inscriptos</b></div>
-            </div>
-            <div className="enter delay-1" id="en-vivo"><LiveAccess checkoutUrl={checkoutUrl} /></div>
-          </> : <>
-            <div className="hero-copy enter">
-              <p className="eyebrow">Escuela EDT · Tres jornadas online</p>
-              <h1>Congreso Virtual EDT 2026 <em>Tres días para pensar el fútbol profesional.</em></h1>
-              <p className="lead">Charlas en vivo con referentes de la dirección técnica, la preparación física, el scouting y la gestión de clubes. Un espacio online, intensivo y aplicable.</p>
-              <div className="hero-actions"><RegisterButton href={checkoutUrl} /><a className="button button-secondary" href="#agenda">Ver agenda <span aria-hidden="true">↓</span></a></div>
-            </div>
-            <aside className="include-card enter delay-1">
-              <p className="card-label">Tu inscripción incluye</p>
-              <p className="price-tag"><span>Valor de inscripción</span><strong>$50.000</strong></p>
-              <ul>
-                <li><i>01</i><span>Acceso en vivo a las tres jornadas, vía streaming.</span></li>
-                <li><i>02</i><span>Resúmenes y contenidos destacados al finalizar cada día.</span></li>
-                <li><i>03</i><span>Certificado de participación de Escuela EDT.</span></li>
-                <li><i>04</i><span>Un espacio para llevar ideas directamente a tu trabajo.</span></li>
-                <li><i>05</i><span>Grabación completa para volver a ver el Congreso.</span></li>
-                <li><i>06</i><span>Participación en el sorteo por una beca para un curso de EDT.</span></li>
-              </ul>
-            </aside>
-          </>}
+          <div className="hero-copy enter">
+            <p className="eyebrow live-eyebrow"><i aria-hidden="true" />Edición 2026 finalizada</p>
+            <h1>Gracias por vivir el <em>Congreso EDT.</em></h1>
+            <p className="lead">Tres jornadas de ideas, experiencias y herramientas para seguir haciendo crecer el fútbol profesional.</p>
+            <div className="live-signal-row"><span className="live-pulse" aria-hidden="true" /><span>12 expositores</span><span className="live-pulse" aria-hidden="true" /><span>3 jornadas</span></div>
+          </div>
+          <aside className="live-access-card enter delay-1">
+            <span className="live-card-kicker"><i aria-hidden="true" />Nos volvemos a encontrar</span>
+            <h2>Próximamente, nueva edición.</h2>
+            <p>Estamos preparando el próximo Congreso EDT. Muy pronto compartiremos las novedades.</p>
+          </aside>
         </div>
       </section>
 
       <section className="section" id="congreso">
         <div className="container">
-          <div className="section-head reveal"><p className="eyebrow">Cronograma del Congreso</p><h2>12 expositores en tres días de fútbol real.</h2><p>Un encuentro virtual con charlas aplicadas, breaks y una mesa redonda final en cada jornada.</p></div>
+          <div className="section-head reveal"><p className="eyebrow">Edición 2026</p><h2>Así fue el Congreso EDT.</h2><p>Doce expositores, tres jornadas y distintas miradas para seguir pensando el fútbol profesional.</p></div>
           <div className="schedule-meta reveal"><span>Modalidad virtual</span><i aria-hidden="true" /> <span>12 expositores</span><i aria-hidden="true" /> <span>3 días</span></div>
           <div className="schedule-grid">{schedule.map((item, index) => <article className={`schedule-card ${item.accent} reveal`} style={{ transitionDelay: `${index * 90}ms` }} key={item.day}>
             <div className="schedule-card-day"><span>{item.day}</span></div>
@@ -546,7 +323,7 @@ export default function Home() {
 
       <section className="section agenda-section" id="agenda">
         <div className="container">
-          <div className="section-head reveal"><p className="eyebrow">Planificación por horario</p><h2>Una agenda para vivir cada charla.</h2><p>Doce exposiciones de 40 minutos y una mesa redonda para cerrar cada jornada.</p></div>
+          <div className="section-head reveal"><p className="eyebrow">Agenda de la edición 2026</p><h2>Las charlas que compartimos.</h2><p>Doce exposiciones y una mesa redonda para cerrar cada jornada.</p></div>
           <div className="agenda-days">
             {agenda.map((day, index) => <article className={`agenda-day ${day.accent} reveal`} style={{ transitionDelay: `${index * 90}ms` }} key={day.day}>
               <header className="agenda-day-head"><p>{day.day}</p><h3>{day.date}</h3></header>
@@ -561,7 +338,7 @@ export default function Home() {
 
       <section className="section speakers-section" id="expositores">
         <div className="container">
-          <div className="section-head reveal"><p className="eyebrow">Expositores anunciados</p><h2>Nuestros expositores</h2><p>Dirección técnica, rendimiento, nutrición, ciencia aplicada y salud mental. Estos son los perfiles confirmados hasta hoy.</p></div>
+          <div className="section-head reveal"><p className="eyebrow">Expositores de la edición 2026</p><h2>Quienes fueron parte.</h2><p>Dirección técnica, rendimiento, nutrición, ciencia aplicada y salud mental en un mismo encuentro.</p></div>
           <div className="speakers-grid">
             {speakers.filter((speaker) => speaker.published).map((speaker, index) => <article className={`speaker-card ${speaker.useFlyerCrop ? "speaker-card-flyer" : ""} reveal`} style={{ transitionDelay: `${(index % 3) * 85}ms` }} key={speaker.name}>
               <div className="speaker-card-visual">
@@ -578,7 +355,7 @@ export default function Home() {
       </section>
 
       <section className="section final-section">
-        <div className="container"><div className="final-card reveal"><div><p className="eyebrow">Cupos limitados · Inscripción $50.000</p><h2>Reservá tu lugar en el Congreso EDT.</h2><p>Todo el contenido, una sola inscripción y una experiencia pensada para quienes quieren trabajar mejor en fútbol.</p></div><RegisterButton href={checkoutUrl} /></div></div>
+        <div className="container"><div className="final-card reveal"><div><p className="eyebrow">Congreso Virtual EDT</p><h2>Próximamente, una nueva edición.</h2><p>Gracias a quienes fueron parte de esta primera experiencia. Estamos preparando lo que viene.</p></div></div></div>
       </section>
 
       {selectedSpeaker && <div className="summary-modal-backdrop" role="presentation" onMouseDown={() => setSelectedSpeaker(null)}>
